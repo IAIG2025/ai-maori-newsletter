@@ -1,0 +1,48 @@
+name: AI Maori Newsletter
+
+on:
+  workflow_dispatch:
+    inputs:
+      test_mode:
+        description: 'Test mode'
+        required: false
+        default: 'true'
+  schedule:
+    - cron: '0 9 * * 1'
+
+jobs:
+  newsletter:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+    
+    - name: Create service account
+      run: echo '${{ secrets.GOOGLE_SHEETS_CREDS }}' > service_account.json
+    
+    - name: Run newsletter
+      env:
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        GMAIL_USER: ${{ secrets.GMAIL_USER }}
+        GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+        GOOGLE_SHEETS_CREDS_PATH: service_account.json
+        TEST_MODE: ${{ github.event.inputs.test_mode }}
+      run: python newsletter_bot.py
+    
+    - name: Upload newsletter
+      uses: actions/upload-artifact@v4
+      with:
+        name: newsletter
+        path: newsletter_*.html
+        if-no-files-found: warn
+    
+    - name: Cleanup
+      run: rm -f service_account.json
