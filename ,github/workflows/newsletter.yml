@@ -2,7 +2,7 @@ name: AI & Māori Weekly Newsletter
 
 on:
   schedule:
-    - cron: '0 9 * * 1'
+    - cron: '0 9 * * 1'  # Fixed: added space before 1
   workflow_dispatch:
     inputs:
       test_mode:
