@@ -1,34 +1,39 @@
-name: AI Maori Newsletter
+name: AI & Māori Weekly Newsletter
+# Updated: Force reload
 
 on:
+  schedule:
+    - cron: '0 9 * * 1'  # Fixed: added space before 1
   workflow_dispatch:
     inputs:
       test_mode:
-        description: 'Test mode'
+        description: 'Run in test mode (save to file only)'
         required: false
-        default: 'true'
-  schedule:
-    - cron: '0 9 * * 1'
+        default: 'false'
 
 jobs:
-  newsletter:
+  generate-newsletter:
     runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
     
-    - name: Setup Python
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.9'
-    
+        
     - name: Install dependencies
       run: |
+        python -m pip install --upgrade pip
         pip install -r requirements.txt
-    
-    - name: Create service account
-      run: echo '${{ secrets.GOOGLE_SHEETS_CREDS }}' > service_account.json
-    
-    - name: Run newsletter
+        
+    - name: Create Google Service Account File
+      run: |
+        echo '${{ secrets.GOOGLE_SHEETS_CREDS }}' > service_account.json
+        
+    - name: Run Newsletter Bot
       env:
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         GMAIL_USER: ${{ secrets.GMAIL_USER }}
@@ -36,13 +41,14 @@ jobs:
         GOOGLE_SHEETS_CREDS_PATH: service_account.json
         TEST_MODE: ${{ github.event.inputs.test_mode }}
       run: python newsletter_bot.py
-    
-    - name: Upload newsletter
+      
+    - name: Upload Newsletter Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: newsletter
+        name: newsletter-html
         path: newsletter_*.html
+        retention-days: 30
         if-no-files-found: warn
-    
+        
     - name: Cleanup
       run: rm -f service_account.json
