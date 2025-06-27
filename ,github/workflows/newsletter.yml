@@ -2,8 +2,9 @@ name: AI & Māori Weekly Newsletter
 
 on:
   schedule:
+    # Runs every Monday at 9:00 AM UTC (adjust timezone as needed)
     - cron: '0 9 * * 1'
-  workflow_dispatch:
+  workflow_dispatch:  # Allows manual triggering
     inputs:
       test_mode:
         description: 'Run in test mode (save to file only)'
@@ -47,6 +48,7 @@ jobs:
         name: newsletter-html
         path: newsletter_*.html
         retention-days: 30
+        if-no-files-found: warn
         
     - name: Cleanup
       run: rm -f service_account.json
