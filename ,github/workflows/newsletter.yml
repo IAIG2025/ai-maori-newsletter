@@ -1,4 +1,5 @@
 name: AI & Māori Weekly Newsletter
+# Updated: Force reload
 
 on:
   schedule:
