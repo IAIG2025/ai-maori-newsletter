@@ -50,7 +50,7 @@ class NewsletterBot:
             ],
             'websites': [
                 {
-                    'url': 'https://www.tepunikokiri.govt.nz',
+                    'url': 'https://www.tpk.govt.nz',
                     'selector': 'article h2 a',  # CSS selector for headlines
                     'name': 'Te Puni Kōkiri'
                 },
