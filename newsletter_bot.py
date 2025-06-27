@@ -45,6 +45,8 @@ class NewsletterBot:
                 'https://techcrunch.com/category/artificial-intelligence/feed/',
                 'https://venturebeat.com/ai/feed/',
                 'https://feeds.feedburner.com/oreilly/radar'
+                'https://www.rnz.co.nz/rss/news/'
+                'https://www.teaomaori.news/rss.xml'
             ],
             'websites': [
                 {
